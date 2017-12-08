@@ -36,30 +36,29 @@ transitive_rule = IF( AND('(?x) beats (?y)',
 
 # Define your rules here:
 self_rule = IF(('person (?x)'),THEN('self (?x) (?x)'))
-sibling_rule = IF( AND('parent (?x) (?y)',
-                       'parent (?x) (?z)',
+
+sibling_rule = IF( AND('parent (?x) (?y)', 'parent (?x) (?z)',
                        NOT('self (?y) (?z)')),
                    THEN( 'sibling (?y) (?z)',
-                            'sibling (?z) (?y)'))
+                         'sibling (?z) (?y)'))
+
 child_rule = IF('parent (?x) (?y)', THEN('child (?y) (?x)'))
 
 cousin_rule = IF(AND('sibling (?x) (?y)',
-                      'parent (?x) (?a)',
-                      'parent (?y) (?b)',
-                      NOT('sibling (?a) (?b)')),
-                  THEN('cousin (?a) (?b)',
-                       'cousin (?b) (?a)'))
-grandparent_rule = IF(AND('parent (?x) (?y)',
-                          'parent (?y) (?z)'),THEN('grandparent (?x) (?z)'))
-grandchild_rule = IF('grandparent (?x) (?y)',THEN('grandchild (?y) (?x)'))
+                     'parent (?x) (?a)',
+                     'parent (?y) (?b)',
+                     NOT('sibling (?a) (?b)')),
+                 THEN('cousin (?a) (?b)',
+                      'cousin (?b) (?a)'))
 
+grandparent_rule = IF(AND('parent (?x) (?y)', 'parent (?y) (?z)'),
+                      THEN('grandparent (?x) (?z)'))
 
-
+grandchild_rule = IF('grandparent (?x) (?y)', THEN('grandchild (?y) (?x)'))
 
 
 # Add your rules to this list:
 family_rules = [self_rule,sibling_rule,child_rule,cousin_rule,grandparent_rule,grandchild_rule]
-
 
 # Uncomment this to test your data on the Simpsons family:
 #print forward_chain(family_rules, simpsons_data, verbose=False)
@@ -70,6 +69,7 @@ family_rules = [self_rule,sibling_rule,child_rule,cousin_rule,grandparent_rule,g
 
 # The following should generate 14 cousin relationships, representing 7 pairs
 # of people who are cousins:
+
 black_family_cousins = [
     relation for relation in
     forward_chain(family_rules, black_data, verbose=False)
@@ -124,6 +124,7 @@ def backchain_to_goal_tree(rules, hypothesis):
                 else:
                     antecedent = populate(rule.antecedent(),binding)
                     rootMode.append((backchain_to_goal_tree(rules,antecedent)))
+
             else: #no match ==> hypothesis is a leaf
                 if hypothesis == "stuff":
                     print(hypothesis)
